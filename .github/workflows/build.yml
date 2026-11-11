@@ -1,0 +1,21 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show Xcode
+        run: xcodebuild -version
+      - name: Build FujiProbe (unsigned)
+        run: |
+          xcodebuild -project FujiProbe/FujiProbe.xcodeproj -target FujiProbe \
+            -sdk iphoneos -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 60
+          exit ${PIPESTATUS[0]}
